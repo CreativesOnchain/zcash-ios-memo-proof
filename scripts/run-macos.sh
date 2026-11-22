@@ -33,7 +33,7 @@ find_pin() {
 }
 find_pin https://github.com/Zkignal/zignal.git .run/zignal 1341797872c97c21a7d9f83e1936f89d876fbcec
 find_pin https://github.com/valargroup/wallet-pir.git .run/wallet-pir 09bcd8c8b79b14f3dd6599a07fc9ba72017616a3
-
+sed -i.bak '/select.select(.*proxy.stdout/s/, 5)/, 90)/' .run/wallet-pir/tools/enhance/scripts/local_fleet.py
 rustup toolchain install 1.97.1 --profile minimal
 if [[ "$(uname -m)" = arm64 ]]; then sim_target=aarch64-apple-ios-sim
 else sim_target=x86_64-apple-ios
