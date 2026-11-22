@@ -1,0 +1,17 @@
+"""Select an available iPhone from the highest installed iOS runtime."""
+import json
+import sys
+from pathlib import Path
+
+devices = json.loads(Path(sys.argv[1]).read_text())["devices"]
+runtimes = [key for key in devices if key.startswith("com.apple.CoreSimulator.SimRuntime.iOS-")]
+runtimes.sort(key=lambda key: tuple(map(int, key.split(".iOS-")[1].split("-"))), reverse=True)
+for runtime in runtimes:
+    phones = [device for device in devices[runtime]
+              if device["isAvailable"] and device["name"].startswith("iPhone")]
+    if phones:
+        print(next((d for d in phones if d["state"] == "Booted"), phones[0])["udid"])
+        break
+else:
+    sys.exit("No installed iOS Simulator with an available iPhone")
+
