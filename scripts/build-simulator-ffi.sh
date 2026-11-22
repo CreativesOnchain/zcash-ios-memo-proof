@@ -55,5 +55,5 @@ with (Path(output) / "Info.plist").open("wb") as f:
                    "XCFrameworkFormatVersion": "1.0"}, f)
 PY
 plutil -lint "$xcf/Info.plist"
-xcrun lipo -verify_arch "$arch" "$framework/libzcashlc"
+xcrun lipo "$framework/libzcashlc" -verify_arch "$arch"
 shasum -a 256 "$framework/libzcashlc" "$header"
