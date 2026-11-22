@@ -1,0 +1,50 @@
+name: iOS memo proof
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  simulator:
+    runs-on: macos-15
+    timeout-minutes: 80
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare build tools
+        run: |
+          python3 scripts/results.py init
+          (command -v xcodegen || brew install xcodegen) 2>&1 | tee artifacts/xcodegen-install.log
+          (command -v protoc || brew install protobuf) 2>&1 | tee artifacts/protoc-install.log
+          openssl_prefix="$(brew --prefix openssl@3)"
+          if [ ! -x "$openssl_prefix/bin/openssl" ]; then brew install openssl@3; fi
+          echo "$openssl_prefix/bin" >> "$GITHUB_PATH"
+      - name: Run pinned iOS proof
+        timeout-minutes: 70
+        run: bash scripts/run-macos.sh
+      - name: Collect Xcode and Simulator diagnostics
+        if: always()
+        timeout-minutes: 5
+        run: |
+          mkdir -p artifacts
+          if [ ! -f artifacts/results.json ]; then python3 scripts/results.py init; fi
+          python3 scripts/results.py block "GitHub Actions setup or run ended before native evidence was produced. See workflow and diagnostics logs."
+          xcodebuild -version > artifacts/xcode-version.log 2>&1 || true
+          xcrun simctl list > artifacts/simulator-list.log 2>&1 || true
+          xcrun simctl spawn booted log show --last 20m --predicate 'process == "MemoProof"' > artifacts/simulator-unified.log 2>&1 || true
+          cat artifacts/results.json >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload proof and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-memo-proof
+          path: artifacts/
+          if-no-files-found: error
+
