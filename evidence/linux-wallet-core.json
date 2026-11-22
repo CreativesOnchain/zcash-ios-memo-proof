@@ -1,0 +1,82 @@
+{
+  "platform": "Linux x86_64",
+  "layer": "Rust C ABI and fixture gRPC",
+  "zignal_source": "1341797872c97c21a7d9f83e1936f89d876fbcec",
+  "valar_source": "09bcd8c8b79b14f3dd6599a07fc9ba72017616a3",
+  "candidate_patch_sha256": "ebb75228f487fa50d719f288212421c8511b7ba13892409dee9e73a3e4a7ac67",
+  "native_ios_status": "BLOCKED",
+  "txid_wire_order": "881b496b96f4f97e0f5c339df3e0a3f228ad28a7071f99161eec25c2bc9a51a5",
+  "expected_memo_sha256": "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4",
+  "runs": {
+    "ORDINARY": {
+      "receive": {
+        "mined_height": 3428143,
+        "scanned_through": 3428144,
+        "ironwood_outputs": 1,
+        "memo_bytes": 512,
+        "memo_sha256": "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4",
+        "pending_full_enhancements": 0
+      },
+      "refresh": {
+        "mined_height": 3428143,
+        "scanned_through": 3428145,
+        "ironwood_outputs": 1,
+        "memo_bytes": 512,
+        "memo_sha256": "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4",
+        "pending_full_enhancements": 0
+      },
+      "traffic": {
+        "host_requested_GetTransaction": 1,
+        "successful_encrypted_posts": 0,
+        "witnessed_refusals": 0
+      }
+    },
+    "PRIVATE": {
+      "receive": {
+        "mined_height": 3428143,
+        "scanned_through": 3428144,
+        "ironwood_outputs": 1,
+        "memo_bytes": 512,
+        "memo_sha256": "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4",
+        "pending_full_enhancements": 1
+      },
+      "refresh": {
+        "mined_height": 3428143,
+        "scanned_through": 3428145,
+        "ironwood_outputs": 1,
+        "memo_bytes": 512,
+        "memo_sha256": "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4",
+        "pending_full_enhancements": 1
+      },
+      "traffic": {
+        "host_requested_GetTransaction": 0,
+        "successful_encrypted_posts": 1,
+        "witnessed_refusals": 0
+      }
+    },
+    "PIR OFFLINE": {
+      "receive": {
+        "mined_height": 3428143,
+        "scanned_through": 3428144,
+        "ironwood_outputs": 1,
+        "memo_bytes": null,
+        "memo_sha256": null,
+        "pending_full_enhancements": 1
+      },
+      "refresh": {
+        "mined_height": 3428143,
+        "scanned_through": 3428145,
+        "ironwood_outputs": 1,
+        "memo_bytes": null,
+        "memo_sha256": null,
+        "pending_full_enhancements": 1
+      },
+      "traffic": {
+        "host_requested_GetTransaction": 0,
+        "successful_encrypted_posts": 0,
+        "witnessed_refusals": 1
+      }
+    }
+  },
+  "host_core_status": "PASS"
+}

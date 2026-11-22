@@ -38,7 +38,7 @@ rustup toolchain install 1.97.1 --profile minimal
 if [[ "$(uname -m)" = arm64 ]]; then sim_target=aarch64-apple-ios-sim
 else sim_target=x86_64-apple-ios
 fi
-rustup target add --toolchain 1.97.1 aarch64-apple-ios "$sim_target"
+rustup target add --toolchain 1.97.1 "$sim_target"
 python3 -m venv .run/python
 source .run/python/bin/activate
 python -m pip install -r scripts/requirements.txt
@@ -52,5 +52,6 @@ CARGO_TARGET_DIR="$PWD/.run/fixture-target" cargo +1.97.1 run --quiet --locked \
 stage="stock, private and offline Simulator runs"
 export PYTHONPATH="$PWD/.run/generated:$PWD/.run/wallet-pir/tools/enhance/scripts"
 export CARGO_NET_GIT_FETCH_WITH_CLI=true
+python -m unittest discover -s scripts -p 'test_verdict.py' -v
 python scripts/run_proof.py "$udid"
 

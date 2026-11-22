@@ -1,5 +1,6 @@
 """Drive the stock and patched native apps. Compute the verdict from retained evidence."""
 import argparse
+import errno
 import hashlib
 import json
 import os
@@ -105,87 +106,117 @@ def evaluate(mode, native, events, log, expected, txid):
     named = [e for e in rpc if names(e["request"], targets)]
     probe_lookups = [e for e in rpc if names(e["request"], (STATUS_PROBE,))]
     pir = [e for e in events if e["service"] == "pir"]
-    query = [e for e in pir if e["method"] == "POST" and "/query" in e["request"]["path"]]
+    def route(event):
+        return urlsplit(event["request"]["path"]).path
+
+    query = [e for e in pir if e["method"] == "POST" and route(e) == "/enhance/v1/query"]
     answered = [e for e in query if e["http_status"] == 200 and e["response_bytes"] > 0]
-    unsuccessful = log.count("Ironwood PIR memo pending: PIR transport attempt failed")
-    status = [line for line in log.splitlines() if "type=getStatus attempt=" in line]
+    refused = [e for e in pir if e["method"] == "GET" and route(e) == "/enhance/v1/init"
+               and e.get("backend_connection_refused") and e["http_status"] == 503]
+    direct_refused = any(e["service"] == "control" and e["method"] == "direct_pir_refused"
+                         and e["phase"] == "refresh" for e in events)
+    receive_log, marker, refresh_log = log.partition("MemoProof begin refresh")
+    phases = {"receive": (RECEIVE_TIP, receive_log), "refresh": (REFRESH_TIP, refresh_log)}
+    scans = {phase: sum(e["method"] == "GetBlockRange" and e["phase"] == phase for e in rpc)
+             for phase in phases}
     report = {
         "status": "BLOCKED",
-        "blocker": native.get("error") or "No complete native evidence",
+        "blocker": native.get("error") or "Native receive and refresh evidence is incomplete",
         "expected_memo_sha256": expected,
         "receive": native.get("receive"),
         "refresh": native.get("refresh"),
-        "private_query_attempts": len(query) + unsuccessful,
+        "private_query_attempts": len(query),
         "encrypted_query_posts": len(query),
         "encrypted_query_successes": len(answered),
-        "private_transport_attempts_while_offline": unsuccessful,
+        "witnessed_offline_init_requests": len(refused),
+        "direct_pir_port_refused_before_refresh": direct_refused,
+        "compact_block_requests": scans,
         "ordinary_txid_lookups": len(named),
         "ordinary_txid_lookups_receive": sum(e["phase"] == "receive" for e in named),
         "ordinary_txid_lookups_refresh": sum(e["phase"] == "refresh" for e in named),
         "ordinary_get_transaction": sum(e["method"] == "GetTransaction" for e in named),
         "status_probe_ordinary_lookups": len(probe_lookups),
         "sdk_enhancement_attempts": log.count("type=enhancement attempt="),
-        "sdk_status_requests": len(status),
+        "sdk_status_requests": log.count("type=getStatus attempt="),
         "sdk_status_deferred": log.count("Ironwood PIR status deferred"),
         "pending_enhancement_requests": native.get("pending_enhancement_requests"),
         "database": native.get("database"),
+        "checks": {},
     }
+    checks = report["checks"]
 
-    checks = {}
-    if mode != "STOCK":
-        checks["no ordinary request names the transaction"] = not named
-        checks["no ordinary request names the status probe"] = not probe_lookups
-        checks["no PIR request body names the transaction"] = not any(e["names_fixture"] for e in pir)
-        checks["observed SDK status requests were deferred"] = report["sdk_status_deferred"] == len(status)
-        if named or probe_lookups:
-            report.update(status="FAIL", blocker=None, failed_criteria=[
-                criterion for criterion, passed in checks.items() if not passed
-            ])
-
-    if native.get("simulator") and native.get("mode") == mode:
-        needed = (("receive", RECEIVE_TIP),) if mode == "STOCK" else (
-            ("receive", RECEIVE_TIP), ("refresh", REFRESH_TIP),
-        )
-        for phase, tip in needed:
-            if snapshot := native.get(phase):
-                checks[f"{phase} scanned required tip"] = snapshot["scannedHeight"] >= tip
-                checks[f"{phase} found the mined Ironwood output"] = (
-                    snapshot.get("minedHeight") == MINED and snapshot["ironwoodOutputCount"] == 1
-                )
-                desired_memos = [] if mode == "PIR OFFLINE" else [expected]
-                desired_lengths = [] if mode == "PIR OFFLINE" else [512]
-                checks[f"{phase} memo bytes"] = (
-                    snapshot["memoHashes"] == desired_memos and snapshot["memoLengths"] == desired_lengths
-                )
-                if mode != "STOCK":
-                    receive_log, _, refresh_log = log.partition("MemoProof begin refresh")
-                    phase_log = receive_log if phase == "receive" else refresh_log
-                    checks[f"{phase} exercised and deferred SDK status lookup"] = (
-                        "type=getStatus attempt=" in phase_log and "Ironwood PIR status deferred" in phase_log
-                    )
-        if mode == "STOCK" and native.get("receive"):
-            checks["stock receive fetched by transaction ID"] = any(
-                e["method"] == "GetTransaction" and e["phase"] == "receive" for e in named
-            )
-        elif mode == "PRIVATE" and native.get("receive"):
-            checks["receive reached real PIR query server"] = any(e["phase"] == "receive" for e in answered)
-        elif mode == "PIR OFFLINE" and native.get("receive"):
-            checks["wallet attempted the offline PIR transport"] = unsuccessful > 0
-            checks["wallet retained pending enhancement"] = (native.get("pending_enhancement_requests") or 0) > 0
-            checks["private service received no traffic during the outage"] = not pir
-            if native.get("refresh"):
-                checks["lightwalletd remained available during the outage"] = all(
-                    any(e["method"] == "GetBlockRange" and e["phase"] == phase for e in rpc)
-                    for phase in ("receive", "refresh")
-                )
-
-        violated = [criterion for criterion, passed in checks.items() if not passed]
+    def fail_if_violated():
+        violated = [name for name, passed in checks.items() if not passed]
         if violated:
             report.update(status="FAIL", blocker=None, failed_criteria=violated)
-        elif all(native.get(phase) for phase, _ in needed):
-            report.update(status="PASS", blocker=None)
-    report["checks"] = checks
+        return bool(violated)
+
+    # An observed disclosure remains evidence even if the app later exits early.
+    if mode != "STOCK":
+        checks["no ordinary request names the memo transaction"] = not named
+        checks["no ordinary request names the status probe"] = not probe_lookups
+        checks["no PIR request names the transaction in the body or path"] = not any(e["names_fixture"] for e in pir)
+        if mode == "PIR OFFLINE":
+            checks["no encrypted query succeeded during outage"] = not answered
+    if fail_if_violated():
+        return report
+
+    if (native.get("simulator") is not True or native.get("mode") != mode
+            or not native.get("database") or native.get("error")
+            or not all(native.get(phase) for phase in phases)):
+        return report
+    if not all(scans.values()):
+        report["blocker"] = "Missing decoded compact-block traffic for receive or refresh"
+        return report
+    if mode != "STOCK" and (not marker or "MemoProof begin receive" not in receive_log):
+        report["blocker"] = "Missing native console phase markers"
+        return report
+    if mode == "PIR OFFLINE" and (not direct_refused or native.get("pending_enhancement_requests") is None):
+        report["blocker"] = "Missing direct-refusal control or pending-queue measurement"
+        return report
+
+    for phase, (tip, phase_log) in phases.items():
+        snapshot = native[phase]
+        checks[f"{phase} scanned required tip"] = snapshot.get("scannedHeight", -1) >= tip
+        checks[f"{phase} found the mined Ironwood output"] = (
+            snapshot.get("minedHeight") == MINED and snapshot.get("ironwoodOutputCount") == 1
+        )
+        checks[f"{phase} memo bytes"] = (
+            snapshot.get("memoHashes") == ([] if mode == "PIR OFFLINE" else [expected])
+            and snapshot.get("memoLengths") == ([] if mode == "PIR OFFLINE" else [512])
+        )
+        if mode != "STOCK":
+            statuses = phase_log.count("type=getStatus attempt=")
+            checks[f"{phase} exercised and deferred each SDK status lookup"] = (
+                statuses > 0 and phase_log.count("Ironwood PIR status deferred") == statuses
+            )
+    if mode == "STOCK":
+        checks["stock receive fetched by transaction ID"] = any(
+            e["method"] == "GetTransaction" and e["phase"] == "receive" for e in named
+        )
+    elif mode == "PRIVATE":
+        checks["receive received an encrypted Valar answer"] = any(e["phase"] == "receive" for e in answered)
+    else:
+        checks["receive reached the tap while its Valar backend refused connections"] = any(
+            e["phase"] == "receive" for e in refused
+        )
+        checks["refresh retried private transport after direct port closure"] = (
+            "type=enhancement attempt=" in refresh_log and
+            "Ironwood PIR memo pending: PIR transport attempt failed" in refresh_log
+        )
+        checks["wallet retained pending enhancement"] = native["pending_enhancement_requests"] > 0
+
+    if not fail_if_violated():
+        report.update(status="PASS", blocker=None)
     return report
+
+
+def require_refusal(port):
+    with socket.socket() as probe:
+        probe.settimeout(2)
+        observed = probe.connect_ex(("127.0.0.1", port))
+    if observed != errno.ECONNREFUSED:
+        raise RuntimeError(f"Expected ECONNREFUSED on the isolated PIR port, got {observed}")
 
 
 def start_valar(chain, artifacts, state, binaries, node_port):
@@ -295,17 +326,24 @@ def main():
                 pir_port = tap.server_address[1]
             else:
                 stage = "isolating the PIR outage"
-                tap.shutdown()
-                tap.server_close()
-                tap = None
+                backend_port = urlsplit(fleet.origin).port
                 fleet.close()
                 fleet = None
-                with socket.socket() as probe:
-                    if probe.connect_ex(("127.0.0.1", pir_port)) == 0:
-                        raise RuntimeError("PIR listener remained online")
+                require_refusal(backend_port)
                 result["offline_isolation"] = {
-                    "pir_port": pir_port, "pir_connection_refused": True, "lightwalletd_port": lwd_port,
+                    "valar_backend_port": backend_port, "valar_backend_refused": True,
+                    "app_pir_port": pir_port, "lightwalletd_port": lwd_port,
                 }
+
+                def isolate_refresh():
+                    nonlocal tap
+                    tap.shutdown()
+                    tap.server_close()
+                    tap = None
+                    require_refusal(pir_port)
+                    chain.record("control", "direct_pir_refused", {"port": pir_port})
+
+                chain.before_refresh = isolate_refresh
             stage = f"{mode} native Simulator run"
             try:
                 native = run_app(mode, args.udid, fixture,

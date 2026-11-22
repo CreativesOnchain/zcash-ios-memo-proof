@@ -59,6 +59,7 @@ class Chain:
         self.txid = bytes.fromhex(fixture["txid"])
         self.raw = bytes.fromhex(fixture["tx"])
         self.events = []
+        self.before_refresh = None
         self.lock = threading.RLock()
         self.destination = destination
         self.blocks = {}
@@ -194,6 +195,12 @@ class Chain:
                     if self.path != "/refresh" or chain.phase != "receive":
                         return self.reply(status=409)
                     chain.phase, chain.tip = "refresh", REFRESH_TIP
+                    if chain.before_refresh is not None:
+                        try:
+                            chain.before_refresh()
+                        except (OSError, RuntimeError) as error:
+                            chain.record("control", "outage_setup_error", {"error": str(error)})
+                            return self.reply(status=503)
                     chain.record("control", "refresh", {})
                 self.reply()
 
@@ -238,19 +245,27 @@ class Chain:
         class Tap(QuietHandler):
             def forward(self):
                 body = self.rfile.read(int(self.headers.get("Content-Length", 0)))
-                names_fixture = any(value in body for value in (
-                    chain.txid, chain.txid[::-1], chain.txid.hex().encode(),
-                    chain.txid[::-1].hex().encode(),
-                ))
+                path = self.path.lower()
+                names_fixture = any(
+                    value in body or value.hex().encode() in body.lower() or value.hex() in path
+                    for value in (chain.txid, chain.txid[::-1])
+                )
                 upstream = http.client.HTTPConnection("127.0.0.1", target, timeout=60)
                 try:
-                    upstream.request(self.command, self.path, body,
-                                     {"Content-Type": "application/octet-stream"})
-                    response = upstream.getresponse()
-                    data = response.read()
+                    try:
+                        upstream.request(self.command, self.path, body,
+                                         {"Content-Type": "application/octet-stream"})
+                        response = upstream.getresponse()
+                        data = response.read()
+                    except ConnectionRefusedError:
+                        chain.record("pir", self.command, {"path": self.path, "body_bytes": len(body)},
+                                     http_status=503, backend_connection_refused=True, names_fixture=names_fixture,
+                                     response_bytes=0, request_sha256=hashlib.sha256(body).hexdigest())
+                        return self.reply(status=503)
                     chain.record("pir", self.command, {"path": self.path, "body_bytes": len(body)},
                                  http_status=response.status, names_fixture=names_fixture,
-                                 response_bytes=len(data), request_sha256=hashlib.sha256(body).hexdigest())
+                                 backend_connection_refused=False, response_bytes=len(data),
+                                 request_sha256=hashlib.sha256(body).hexdigest())
                     self.reply(data, response.status, response.getheader("Content-Type", "application/octet-stream"))
                 finally:
                     upstream.close()
