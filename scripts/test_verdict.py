@@ -118,6 +118,7 @@ class VerdictTests(unittest.TestCase):
             fixture = {"txid": TXID, "tx": "01", "actions": [], "ironwood_tree": "000000"}
             chain = Chain(fixture, Path(root) / "trace.jsonl", lambda height: b"fixture")
             tap = chain.serve_pir_tap(offline.getsockname()[1])
+            offline.close()
             try:
                 with self.assertRaises(urllib.error.HTTPError) as caught:
                     urllib.request.urlopen(f"http://127.0.0.1:{tap.server_port}/enhance/v1/init", timeout=3)
