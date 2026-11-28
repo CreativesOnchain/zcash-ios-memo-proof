@@ -1,0 +1,27 @@
+{
+  "mode": "PRIVATE",
+  "simulator": true,
+  "database": "/Users/runner/Library/Developer/CoreSimulator/Devices/40A21894-B2EA-46E8-86C3-96B6C28B749F/data/Containers/Data/Application/F62AB88B-205E-4396-A6DD-232E21E56EF5/Documents/E753DC67-6BE8-4FA3-A992-1483766E24F1/wallet.db",
+  "refresh": {
+    "scannedHeight": 3428145,
+    "ironwoodOutputCount": 1,
+    "memoLengths": [
+      512
+    ],
+    "memoHashes": [
+      "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4"
+    ],
+    "minedHeight": 3428143
+  },
+  "receive": {
+    "scannedHeight": 3428144,
+    "ironwoodOutputCount": 1,
+    "memoLengths": [
+      512
+    ],
+    "memoHashes": [
+      "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4"
+    ],
+    "minedHeight": 3428143
+  }
+}

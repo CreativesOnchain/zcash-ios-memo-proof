@@ -1,0 +1,210 @@
+init flow: OPEN — no seed supplied, not creating an account
+Synchronizer's status updated from unprepared to disconnected
+Witnesses fix: nothing recorded yet, running the repair for 1.0
+MemoProof begin receive
+Synchronizer's status updated from disconnected to syncing(0.0, false)
+Couldn't Fetch shielded balance. Won't attempt to download sapling parameters
+CALL suggestScanRanges [ZcashLightClientKit.ScanRange(range: Range(3428143..<3428145), priority: ZcashLightClientKit.ScanRange.Priority.historic)]
+PROCESSING range historic 3428143..<3428145
+Starting scan blocks with range 3428142...3428144
+Scanned 2 blocks in 0.03235793113708496 seconds
+Synchronizer's status updated from syncing(0.0, false) to syncing(1.0, true)
+BlockEnhancer cycle started [1BE8F6] requests=2
+BlockEnhancer [1BE8F6.0] type=getStatus attempt=1
+Ironwood PIR status deferred
+BlockEnhancer [1BE8F6.1] type=enhancement attempt=1
+Ironwood PIR memo applied
+BlockEnhancer cycle complete [1BE8F6]
+CALL suggestScanRanges []
+TxResubmissionAction check started at 3428144 height.
+Synchronizer's status updated from syncing(1.0, true) to syncing(1.0, false)
+Synchronizer's status updated from syncing(1.0, false) to synced
+SYNC (1) REPORT
+finished in: 1.3432409763336182
+account index: AccountUUID(id: [92, 231, 239, 112, 246, 216, 66, 218, 185, 131, 38, 53, 122, 218, 204, 117])
+    verified balance: 0
+    total balance: 0
+action:             validateServer
+runs:               1
+cummulativeTime:    0.005894899368286133
+minTime:            0.005894899368286133
+maxTime:            0.005894899368286133
+avgTime:            0.005894899368286133
+action:             download
+runs:               1
+cummulativeTime:    0.012333869934082031
+minTime:            0.012333869934082031
+maxTime:            0.012333869934082031
+avgTime:            0.012333869934082031
+action:             clearCache
+runs:               2
+cummulativeTime:    0.015124320983886719
+minTime:            0.0020461082458496094
+maxTime:            0.01307821273803711
+avgTime:            0.007562160491943359
+action:             fetchUTXO
+runs:               1
+cummulativeTime:    8.106231689453125e-06
+minTime:            8.106231689453125e-06
+maxTime:            8.106231689453125e-06
+avgTime:            8.106231689453125e-06
+action:             scan
+runs:               1
+cummulativeTime:    0.04099607467651367
+minTime:            0.04099607467651367
+maxTime:            0.04099607467651367
+avgTime:            0.04099607467651367
+action:             handleSaplingParams
+runs:               1
+cummulativeTime:    0.010145902633666992
+minTime:            0.010145902633666992
+maxTime:            0.010145902633666992
+avgTime:            0.010145902633666992
+action:             updateSubtreeRoots
+runs:               1
+cummulativeTime:    0.00461888313293457
+minTime:            0.00461888313293457
+maxTime:            0.00461888313293457
+avgTime:            0.00461888313293457
+action:             clearAlreadyScannedBlocks
+runs:               1
+cummulativeTime:    0.0007410049438476562
+minTime:            0.0007410049438476562
+maxTime:            0.0007410049438476562
+avgTime:            0.0007410049438476562
+action:             updateChainTip
+runs:               1
+cummulativeTime:    0.005431175231933594
+minTime:            0.005431175231933594
+maxTime:            0.005431175231933594
+avgTime:            0.005431175231933594
+action:             txResubmission
+runs:               1
+cummulativeTime:    0.030295133590698242
+minTime:            0.030295133590698242
+maxTime:            0.030295133590698242
+avgTime:            0.030295133590698242
+action:             migrateLegacyCacheDB
+runs:               1
+cummulativeTime:    3.218650817871094e-05
+minTime:            3.218650817871094e-05
+maxTime:            3.218650817871094e-05
+avgTime:            3.218650817871094e-05
+action:             processSuggestedScanRanges
+runs:               2
+cummulativeTime:    0.006425142288208008
+minTime:            0.0013129711151123047
+maxTime:            0.005112171173095703
+avgTime:            0.003212571144104004
+details:
+	range historic 3428143..<3428145
+
+action:             enhance
+runs:               1
+cummulativeTime:    1.2079582214355469
+minTime:            1.2079582214355469
+maxTime:            1.2079582214355469
+avgTime:            1.2079582214355469
+MemoProof begin refresh
+Synchronizer's status updated from synced to syncing(1.0, true)
+CALL suggestScanRanges [ZcashLightClientKit.ScanRange(range: Range(3428145..<3428146), priority: ZcashLightClientKit.ScanRange.Priority.historic)]
+PROCESSING range historic 3428145..<3428146
+Starting scan blocks with range 3428144...3428145
+Scanned 1 blocks in 0.014425039291381836 seconds
+Synchronizer's status updated from syncing(1.0, true) to syncing(1.0, true)
+BlockEnhancer cycle started [704E94] requests=2
+BlockEnhancer [704E94.0] type=getStatus attempt=1
+Ironwood PIR status deferred
+BlockEnhancer [704E94.1] type=enhancement attempt=1
+BlockEnhancer cycle complete [704E94]
+CALL suggestScanRanges []
+TxResubmissionAction check started at 3428145 height.
+Synchronizer's status updated from syncing(1.0, true) to syncing(1.0, false)
+Synchronizer's status updated from syncing(1.0, false) to synced
+SYNC (2) REPORT
+finished in: 0.07445788383483887
+account index: AccountUUID(id: [92, 231, 239, 112, 246, 216, 66, 218, 185, 131, 38, 53, 122, 218, 204, 117])
+    verified balance: 0
+    total balance: 0
+action:             migrateLegacyCacheDB
+runs:               1
+cummulativeTime:    1.3113021850585938e-05
+minTime:            1.3113021850585938e-05
+maxTime:            1.3113021850585938e-05
+avgTime:            1.3113021850585938e-05
+action:             fetchUTXO
+runs:               1
+cummulativeTime:    4.0531158447265625e-06
+minTime:            4.0531158447265625e-06
+maxTime:            4.0531158447265625e-06
+avgTime:            4.0531158447265625e-06
+action:             processSuggestedScanRanges
+runs:               2
+cummulativeTime:    0.0026199817657470703
+minTime:            0.0012738704681396484
+maxTime:            0.0013461112976074219
+avgTime:            0.0013099908828735352
+details:
+	range historic 3428145..<3428146
+
+action:             updateSubtreeRoots
+runs:               1
+cummulativeTime:    0.002064943313598633
+minTime:            0.002064943313598633
+maxTime:            0.002064943313598633
+avgTime:            0.002064943313598633
+action:             updateChainTip
+runs:               1
+cummulativeTime:    0.004030942916870117
+minTime:            0.004030942916870117
+maxTime:            0.004030942916870117
+avgTime:            0.004030942916870117
+action:             clearAlreadyScannedBlocks
+runs:               1
+cummulativeTime:    0.00037288665771484375
+minTime:            0.00037288665771484375
+maxTime:            0.00037288665771484375
+avgTime:            0.00037288665771484375
+action:             download
+runs:               1
+cummulativeTime:    0.012171745300292969
+minTime:            0.012171745300292969
+maxTime:            0.012171745300292969
+avgTime:            0.012171745300292969
+action:             txResubmission
+runs:               1
+cummulativeTime:    0.010482072830200195
+minTime:            0.010482072830200195
+maxTime:            0.010482072830200195
+avgTime:            0.010482072830200195
+action:             validateServer
+runs:               1
+cummulativeTime:    0.004648685455322266
+minTime:            0.004648685455322266
+maxTime:            0.004648685455322266
+avgTime:            0.004648685455322266
+action:             enhance
+runs:               1
+cummulativeTime:    0.00457310676574707
+minTime:            0.00457310676574707
+maxTime:            0.00457310676574707
+avgTime:            0.00457310676574707
+action:             clearCache
+runs:               2
+cummulativeTime:    0.005352973937988281
+minTime:            0.0023610591888427734
+maxTime:            0.002991914749145508
+avgTime:            0.0026764869689941406
+action:             scan
+runs:               1
+cummulativeTime:    0.01914811134338379
+minTime:            0.01914811134338379
+maxTime:            0.01914811134338379
+avgTime:            0.01914811134338379
+action:             handleSaplingParams
+runs:               1
+cummulativeTime:    0.008682012557983398
+minTime:            0.008682012557983398
+maxTime:            0.008682012557983398
+avgTime:            0.008682012557983398
+org.example.zcash.memoproof: 40309

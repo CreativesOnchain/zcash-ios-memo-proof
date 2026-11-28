@@ -1,0 +1,191 @@
+{
+  "status": "PASS",
+  "blocker": null,
+  "pins": {
+    "zignal": "1341797872c97c21a7d9f83e1936f89d876fbcec",
+    "wallet-pir": "09bcd8c8b79b14f3dd6599a07fc9ba72017616a3"
+  },
+  "runs": {
+    "STOCK": {
+      "status": "PASS",
+      "blocker": null,
+      "expected_memo_sha256": "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4",
+      "receive": {
+        "ironwoodOutputCount": 1,
+        "scannedHeight": 3428144,
+        "memoLengths": [
+          512
+        ],
+        "memoHashes": [
+          "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4"
+        ],
+        "minedHeight": 3428143
+      },
+      "refresh": {
+        "ironwoodOutputCount": 1,
+        "scannedHeight": 3428145,
+        "memoLengths": [
+          512
+        ],
+        "memoHashes": [
+          "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4"
+        ],
+        "minedHeight": 3428143
+      },
+      "private_query_attempts": 0,
+      "encrypted_query_posts": 0,
+      "encrypted_query_successes": 0,
+      "witnessed_offline_init_requests": 0,
+      "direct_pir_port_refused_before_refresh": false,
+      "compact_block_requests": {
+        "receive": 1,
+        "refresh": 1
+      },
+      "ordinary_txid_lookups": 1,
+      "ordinary_txid_lookups_receive": 1,
+      "ordinary_txid_lookups_refresh": 0,
+      "ordinary_get_transaction": 1,
+      "status_probe_ordinary_lookups": 0,
+      "sdk_enhancement_attempts": 1,
+      "sdk_status_requests": 0,
+      "sdk_status_deferred": 0,
+      "pending_enhancement_requests": 0,
+      "database": "/Users/runner/Library/Developer/CoreSimulator/Devices/40A21894-B2EA-46E8-86C3-96B6C28B749F/data/Containers/Data/Application/A4D57412-AC0E-44C0-B552-76BEB18FBF75/Documents/000C98A0-839D-4628-A5E8-EC43010D06DF/wallet.db",
+      "checks": {
+        "receive scanned exactly the advertised tip": true,
+        "receive found the mined Ironwood output": true,
+        "receive memo bytes": true,
+        "refresh scanned exactly the advertised tip": true,
+        "refresh found the mined Ironwood output": true,
+        "refresh memo bytes": true,
+        "stock receive fetched by transaction ID": true
+      }
+    },
+    "PRIVATE": {
+      "status": "PASS",
+      "blocker": null,
+      "expected_memo_sha256": "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4",
+      "receive": {
+        "scannedHeight": 3428144,
+        "ironwoodOutputCount": 1,
+        "memoLengths": [
+          512
+        ],
+        "memoHashes": [
+          "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4"
+        ],
+        "minedHeight": 3428143
+      },
+      "refresh": {
+        "scannedHeight": 3428145,
+        "ironwoodOutputCount": 1,
+        "memoLengths": [
+          512
+        ],
+        "memoHashes": [
+          "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4"
+        ],
+        "minedHeight": 3428143
+      },
+      "private_query_attempts": 1,
+      "encrypted_query_posts": 1,
+      "encrypted_query_successes": 1,
+      "witnessed_offline_init_requests": 0,
+      "direct_pir_port_refused_before_refresh": false,
+      "compact_block_requests": {
+        "receive": 1,
+        "refresh": 1
+      },
+      "ordinary_txid_lookups": 0,
+      "ordinary_txid_lookups_receive": 0,
+      "ordinary_txid_lookups_refresh": 0,
+      "ordinary_get_transaction": 0,
+      "status_probe_ordinary_lookups": 0,
+      "sdk_enhancement_attempts": 2,
+      "sdk_status_requests": 2,
+      "sdk_status_deferred": 2,
+      "pending_enhancement_requests": 1,
+      "database": "/Users/runner/Library/Developer/CoreSimulator/Devices/40A21894-B2EA-46E8-86C3-96B6C28B749F/data/Containers/Data/Application/F62AB88B-205E-4396-A6DD-232E21E56EF5/Documents/E753DC67-6BE8-4FA3-A992-1483766E24F1/wallet.db",
+      "checks": {
+        "no ordinary request names the memo transaction": true,
+        "no ordinary request names the status probe": true,
+        "no PIR request names the transaction in the body or path": true,
+        "receive scanned exactly the advertised tip": true,
+        "receive found the mined Ironwood output": true,
+        "receive memo bytes": true,
+        "receive exercised and deferred each SDK status lookup": true,
+        "refresh scanned exactly the advertised tip": true,
+        "refresh found the mined Ironwood output": true,
+        "refresh memo bytes": true,
+        "refresh exercised and deferred each SDK status lookup": true,
+        "receive received an encrypted Valar answer": true
+      }
+    },
+    "PIR OFFLINE": {
+      "status": "PASS",
+      "blocker": null,
+      "expected_memo_sha256": "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4",
+      "receive": {
+        "scannedHeight": 3428144,
+        "ironwoodOutputCount": 1,
+        "minedHeight": 3428143,
+        "memoHashes": [],
+        "memoLengths": []
+      },
+      "refresh": {
+        "scannedHeight": 3428145,
+        "ironwoodOutputCount": 1,
+        "minedHeight": 3428143,
+        "memoHashes": [],
+        "memoLengths": []
+      },
+      "private_query_attempts": 0,
+      "encrypted_query_posts": 0,
+      "encrypted_query_successes": 0,
+      "witnessed_offline_init_requests": 1,
+      "direct_pir_port_refused_before_refresh": true,
+      "compact_block_requests": {
+        "receive": 1,
+        "refresh": 1
+      },
+      "ordinary_txid_lookups": 0,
+      "ordinary_txid_lookups_receive": 0,
+      "ordinary_txid_lookups_refresh": 0,
+      "ordinary_get_transaction": 0,
+      "status_probe_ordinary_lookups": 0,
+      "sdk_enhancement_attempts": 2,
+      "sdk_status_requests": 2,
+      "sdk_status_deferred": 2,
+      "pending_enhancement_requests": 1,
+      "database": "/Users/runner/Library/Developer/CoreSimulator/Devices/40A21894-B2EA-46E8-86C3-96B6C28B749F/data/Containers/Data/Application/695A90D5-8277-44C5-9853-4D2FF77C67ED/Documents/07666D51-F15F-4540-AAA0-40DD31CC642D/wallet.db",
+      "checks": {
+        "no ordinary request names the memo transaction": true,
+        "no ordinary request names the status probe": true,
+        "no PIR request names the transaction in the body or path": true,
+        "no query received a successful HTTP response during outage": true,
+        "receive scanned exactly the advertised tip": true,
+        "receive found the mined Ironwood output": true,
+        "receive memo bytes": true,
+        "receive exercised and deferred each SDK status lookup": true,
+        "refresh scanned exactly the advertised tip": true,
+        "refresh found the mined Ironwood output": true,
+        "refresh memo bytes": true,
+        "refresh exercised and deferred each SDK status lookup": true,
+        "receive reached the tap while its Valar backend refused connections": true,
+        "refresh retried private transport after direct port closure": true,
+        "wallet retained pending enhancement": true
+      }
+    }
+  },
+  "fixture_txid": "881b496b96f4f97e0f5c339df3e0a3f228ad28a7071f99161eec25c2bc9a51a5",
+  "fixture_mined_height": 3428143,
+  "expected_memo_sha256": "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4",
+  "simulator_udid": "40A21894-B2EA-46E8-86C3-96B6C28B749F",
+  "status_probe_txid": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+  "offline_isolation": {
+    "valar_backend_port": 61605,
+    "valar_backend_refused": true,
+    "app_pir_port": 62104,
+    "lightwalletd_port": 51531
+  }
+}

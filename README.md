@@ -4,7 +4,7 @@ This test follows one incoming Zcash payment through the Swift wallet SDK. It re
 
 ## What the native proof measures
 
-[Simulator run #5](https://github.com/CreativesOnchain/zcash-ios-memo-proof/actions/runs/45073979280) passed all three cases on November 22, 2026. It used Xcode 16.4 and an iPhone 17 Pro simulator. Each case started with a fresh wallet database.
+[Simulator run #6](https://github.com/CreativesOnchain/zcash-ios-memo-proof/actions/runs/46088947926) passed all three cases at [commit 86b2fef](https://github.com/CreativesOnchain/zcash-ios-memo-proof/commit/86b2fef0abe5949b587da0f9d12b243cd910312e). It used Xcode 16.4 and an iPhone 17 Pro simulator. Each case started with a fresh wallet database.
 
 | SDK and service | What the wallet read on receive and refresh | What the servers observed |
 | --- | --- | --- |
@@ -14,9 +14,9 @@ This test follows one incoming Zcash payment through the Swift wallet SDK. It re
 
 The app reads the memo through `SDKSynchronizer.getMemos`. The verifier checks its length and SHA-256 digest against the expected fixture bytes. In the two private cases, a second test ID exercises the SDK path for transactions whose mined height is unknown. A lightwalletd request naming either ID fails either private case, even if the app later exits. Missing app reports or missing block-request traces leave the case blocked. The [verifier](scripts/run_proof.py) checks both scan heights and requires a different wallet database for each mode.
 
-The [verdict](evidence/ios-run-5/results.json), [decoded requests](evidence/ios-run-5/requests.jsonl), and [app reports and console logs](evidence/ios-run-5/) are copies from run #5. The queue counts came from the runner's read-only SQLite queries.
+The [verdict](evidence/ios-run-6/results.json), [decoded requests](evidence/ios-run-6/requests.jsonl), and [app reports and console logs](evidence/ios-run-6/) are copies from run #6. The queue counts came from the runner's read-only SQLite queries.
 
-Run #5 recorded scan heights 3,428,144 on receive and 3,428,145 on refresh. Replaying its receive request against the original fixture exposed a server error. The fixture could send the next block early and then end the stream with a gRPC error. The corrected fixture stops at the tip advertised for each phase. A fresh simulator run is needed to verify the app with that correction.
+In run #6 the fixture served blocks 3,428,143 and 3,428,144 on receive. It served block 3,428,145 on refresh. All three wallet databases reported those same scan tips. The fixture in [run #5](https://github.com/CreativesOnchain/zcash-ios-memo-proof/actions/runs/45073979280) could serve the refresh block early. Its [original evidence](evidence/ios-run-5/) is used by the verifier regression tests.
 
 ## Scope of the SDK change
 

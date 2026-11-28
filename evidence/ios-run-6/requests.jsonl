@@ -1,0 +1,56 @@
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":1763.225481041}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":1763.336365083}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":1763.337231208}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":1763.358880625}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":1763.370099958}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428143},"end":{"height":3428443}},"monotonic":1763.401942166}
+{"mode":"STOCK","phase":"receive","service":"fixture","method":"selected_block_range","request":{"first_height":3428143,"last_height":3428144,"advertised_tip":3428144},"monotonic":1763.403373}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetTreeState","request":{"height":3428142},"monotonic":1763.418034416}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetTransaction","request":{"hash":"881b496b96f4f97e0f5c339df3e0a3f228ad28a7071f99161eec25c2bc9a51a5"},"monotonic":1763.494156458}
+{"mode":"STOCK","phase":"refresh","service":"control","method":"refresh","request":{},"monotonic":1763.610592291}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":1763.633006375}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":1763.635486958}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":1763.649860125}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":1763.651908291}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428145},"end":{"height":3428445}},"monotonic":1763.660899875}
+{"mode":"STOCK","phase":"refresh","service":"fixture","method":"selected_block_range","request":{"first_height":3428145,"last_height":3428145,"advertised_tip":3428145},"monotonic":1763.661107416}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetTreeState","request":{"height":3428144},"monotonic":1763.67106675}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":2799.398923}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":2799.497592458}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":2799.497897375}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":2799.514139916}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":2799.517320958}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428143},"end":{"height":3428443}},"monotonic":2799.531350125}
+{"mode":"PRIVATE","phase":"receive","service":"fixture","method":"selected_block_range","request":{"first_height":3428143,"last_height":3428144,"advertised_tip":3428144},"monotonic":2799.531875041}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetTreeState","request":{"height":3428142},"monotonic":2799.542341125}
+{"mode":"PRIVATE","phase":"receive","service":"pir","method":"GET","request":{"path":"/enhance/v1/init","body_bytes":0},"monotonic":2799.616085041,"http_status":200,"names_fixture":false,"backend_connection_refused":false,"response_bytes":1365,"request_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+{"mode":"PRIVATE","phase":"receive","service":"pir","method":"GET","request":{"path":"/enhance/v1/session/27b3d9b8731ae952a410d28344c8c278277f1fb91aa8dcc6b703ea836c289d9a","body_bytes":0},"monotonic":2799.653673583,"http_status":200,"names_fixture":false,"backend_connection_refused":false,"response_bytes":119170,"request_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":2800.005616041}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":2800.551215875}
+{"mode":"PRIVATE","phase":"receive","service":"pir","method":"POST","request":{"path":"/enhance/v1/query","body_bytes":39028},"monotonic":2800.75447625,"http_status":200,"names_fixture":false,"backend_connection_refused":false,"response_bytes":33908,"request_sha256":"4cd44a24cc719083046cf9646fed242f3b605f502de32b8aa0b76056c6d825fb"}
+{"mode":"PRIVATE","phase":"refresh","service":"control","method":"refresh","request":{},"monotonic":2801.036311041}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":2801.05186925}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":2801.052514625}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":2801.063137166}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":2801.065057041}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428145},"end":{"height":3428445}},"monotonic":2801.073066333}
+{"mode":"PRIVATE","phase":"refresh","service":"fixture","method":"selected_block_range","request":{"first_height":3428145,"last_height":3428145,"advertised_tip":3428145},"monotonic":2801.073251458}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetTreeState","request":{"height":3428144},"monotonic":2801.08516975}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":2807.851340583}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":2807.914969208}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":2807.915594791}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":2807.925463583}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":2807.927449333}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428143},"end":{"height":3428443}},"monotonic":2807.944683416}
+{"mode":"PIR OFFLINE","phase":"receive","service":"fixture","method":"selected_block_range","request":{"first_height":3428143,"last_height":3428144,"advertised_tip":3428144},"monotonic":2807.944927416}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetTreeState","request":{"height":3428142},"monotonic":2807.963952666}
+{"mode":"PIR OFFLINE","phase":"receive","service":"pir","method":"GET","request":{"path":"/enhance/v1/init","body_bytes":0},"monotonic":2808.022536041,"http_status":503,"backend_connection_refused":true,"names_fixture":false,"response_bytes":0,"request_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"control","method":"direct_pir_refused","request":{"port":62104},"monotonic":2808.534779166}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"control","method":"refresh","request":{},"monotonic":2808.5353445}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":2808.551805333}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":2808.552009958}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":2808.561304458}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":2808.56356575}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428145},"end":{"height":3428445}},"monotonic":2808.573251583}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"fixture","method":"selected_block_range","request":{"first_height":3428145,"last_height":3428145,"advertised_tip":3428145},"monotonic":2808.573467125}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetTreeState","request":{"height":3428144},"monotonic":2808.583733458}
