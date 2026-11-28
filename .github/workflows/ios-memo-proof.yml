@@ -20,7 +20,7 @@ jobs:
           python-version: '3.12'
       - name: Prepare build tools
         run: |
-          python3 scripts/results.py init
+          mkdir -p artifacts
           (command -v xcodegen || brew install xcodegen) 2>&1 | tee artifacts/xcodegen-install.log
           (command -v protoc || brew install protobuf) 2>&1 | tee artifacts/protoc-install.log
           openssl_prefix="$(brew --prefix openssl@3)"
