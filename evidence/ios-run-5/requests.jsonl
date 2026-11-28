@@ -1,0 +1,52 @@
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":1587.275065041}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":1587.381910291}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":1587.383671125}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":1587.395635416}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":1587.400046208}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428143},"end":{"height":3428443}},"monotonic":1587.421230541}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetTreeState","request":{"height":3428142},"monotonic":1587.442245708}
+{"mode":"STOCK","phase":"receive","service":"lightwalletd","method":"GetTransaction","request":{"hash":"881b496b96f4f97e0f5c339df3e0a3f228ad28a7071f99161eec25c2bc9a51a5"},"monotonic":1587.532192875}
+{"mode":"STOCK","phase":"refresh","service":"control","method":"refresh","request":{},"monotonic":1587.938193791}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":1587.967139541}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":1587.967907375}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":1587.982162416}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":1587.984384916}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428145},"end":{"height":3428445}},"monotonic":1587.995441791}
+{"mode":"STOCK","phase":"refresh","service":"lightwalletd","method":"GetTreeState","request":{"height":3428144},"monotonic":1588.011591208}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":3021.601729166}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":3021.797713833}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":3021.801723708}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":3021.8262315}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":3021.83246425}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428143},"end":{"height":3428443}},"monotonic":3021.883515541}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetTreeState","request":{"height":3428142},"monotonic":3021.910464625}
+{"mode":"PRIVATE","phase":"receive","service":"pir","method":"GET","request":{"path":"/enhance/v1/init","body_bytes":0},"monotonic":3022.0142685,"http_status":200,"names_fixture":false,"backend_connection_refused":false,"response_bytes":1365,"request_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+{"mode":"PRIVATE","phase":"receive","service":"pir","method":"GET","request":{"path":"/enhance/v1/session/27b3d9b8731ae952a410d28344c8c278277f1fb91aa8dcc6b703ea836c289d9a","body_bytes":0},"monotonic":3022.073863125,"http_status":200,"names_fixture":false,"backend_connection_refused":false,"response_bytes":119170,"request_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":3022.334857125}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":3022.911263666}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":3023.453971375}
+{"mode":"PRIVATE","phase":"receive","service":"pir","method":"POST","request":{"path":"/enhance/v1/query","body_bytes":39028},"monotonic":3023.954890666,"http_status":200,"names_fixture":false,"backend_connection_refused":false,"response_bytes":33908,"request_sha256":"e796babefef2d0e5f8409a9d10adca56f62f9d3f11d24dd0cf48cbc5c2f8dbe5"}
+{"mode":"PRIVATE","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":3023.997368958}
+{"mode":"PRIVATE","phase":"refresh","service":"control","method":"refresh","request":{},"monotonic":3024.172051708}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":3024.19586925}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":3024.19656175}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":3024.21281925}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":3024.215314125}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428145},"end":{"height":3428445}},"monotonic":3024.23093425}
+{"mode":"PRIVATE","phase":"refresh","service":"lightwalletd","method":"GetTreeState","request":{"height":3428144},"monotonic":3024.239173416}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":3033.225094541}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":3033.36556275}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":3033.365829166}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":3033.375984166}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":3033.3791905}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428143},"end":{"height":3428443}},"monotonic":3033.393623333}
+{"mode":"PIR OFFLINE","phase":"receive","service":"lightwalletd","method":"GetTreeState","request":{"height":3428142},"monotonic":3033.405203541}
+{"mode":"PIR OFFLINE","phase":"receive","service":"pir","method":"GET","request":{"path":"/enhance/v1/init","body_bytes":0},"monotonic":3033.48166225,"http_status":503,"backend_connection_refused":true,"names_fixture":false,"response_bytes":0,"request_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"control","method":"direct_pir_refused","request":{"port":54762},"monotonic":3033.984625875}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"control","method":"refresh","request":{},"monotonic":3033.984908291}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetMempoolStream","request":{},"monotonic":3034.005193}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetLightdInfo","request":{},"monotonic":3034.006246458}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetSubtreeRoots","request":{},"monotonic":3034.022468875}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetLatestBlock","request":{},"monotonic":3034.024885083}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetBlockRange","request":{"start":{"height":3428145},"end":{"height":3428445}},"monotonic":3034.037965375}
+{"mode":"PIR OFFLINE","phase":"refresh","service":"lightwalletd","method":"GetTreeState","request":{"height":3428144},"monotonic":3034.049477625}

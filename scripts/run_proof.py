@@ -48,6 +48,8 @@ def run_app(mode, udid, fixture, ports, app, artifacts):
     root = Path(sim(udid, "get_app_container", BUNDLE, "data", check=True,
                     capture_output=True, text=True).stdout.strip())
     documents = root / "Documents"
+    if any((documents / name).exists() for name in ("report.json", "receive.json")):
+        raise RuntimeError("The Simulator retained a report from an earlier launch")
     lwd_port, control_port, pir_port = ports
     env = os.environ | {
         "SIMCTL_CHILD_PROOF_MODE": mode,
@@ -100,18 +102,25 @@ def names(value, targets):
     return False
 
 
+def is_valar_query(event):
+    return (event["method"] == "POST"
+            and urlsplit(event["request"]["path"]).path == "/enhance/v1/query")
+
+
+def answered_valar_query(event):
+    return (is_valar_query(event) and event["http_status"] == 200
+            and event["request"].get("body_bytes", 0) > 0 and event["response_bytes"] > 0)
+
+
 def evaluate(mode, native, events, log, expected, txid):
     targets = (txid, bytes.fromhex(txid)[::-1].hex())
     rpc = [e for e in events if e["service"] == "lightwalletd"]
     named = [e for e in rpc if names(e["request"], targets)]
     probe_lookups = [e for e in rpc if names(e["request"], (STATUS_PROBE,))]
     pir = [e for e in events if e["service"] == "pir"]
-    def route(event):
-        return urlsplit(event["request"]["path"]).path
-
-    query = [e for e in pir if e["method"] == "POST" and route(e) == "/enhance/v1/query"]
-    answered = [e for e in query if e["http_status"] == 200 and e["response_bytes"] > 0]
-    refused = [e for e in pir if e["method"] == "GET" and route(e) == "/enhance/v1/init"
+    query = [e for e in pir if is_valar_query(e)]
+    answered = [e for e in query if answered_valar_query(e)]
+    refused = [e for e in pir if e["method"] == "GET" and urlsplit(e["request"]["path"]).path == "/enhance/v1/init"
                and e.get("backend_connection_refused") and e["http_status"] == 503]
     direct_refused = any(e["service"] == "control" and e["method"] == "direct_pir_refused"
                          and e["phase"] == "refresh" for e in events)
@@ -126,7 +135,7 @@ def evaluate(mode, native, events, log, expected, txid):
         "receive": native.get("receive"),
         "refresh": native.get("refresh"),
         "private_query_attempts": len(query),
-        "encrypted_query_posts": len(query),
+        "encrypted_query_posts": sum(e["request"].get("body_bytes", 0) > 0 for e in query),
         "encrypted_query_successes": len(answered),
         "witnessed_offline_init_requests": len(refused),
         "direct_pir_port_refused_before_refresh": direct_refused,
@@ -157,7 +166,9 @@ def evaluate(mode, native, events, log, expected, txid):
         checks["no ordinary request names the status probe"] = not probe_lookups
         checks["no PIR request names the transaction in the body or path"] = not any(e["names_fixture"] for e in pir)
         if mode == "PIR OFFLINE":
-            checks["no encrypted query succeeded during outage"] = not answered
+            checks["no query received a successful HTTP response during outage"] = not any(
+                200 <= e["http_status"] < 300 for e in query
+            )
     if fail_if_violated():
         return report
 
@@ -174,10 +185,15 @@ def evaluate(mode, native, events, log, expected, txid):
     if mode == "PIR OFFLINE" and (not direct_refused or native.get("pending_enhancement_requests") is None):
         report["blocker"] = "Missing direct-refusal control or pending-queue measurement"
         return report
+    if (mode == "PRIVATE" and not any(e["phase"] == "receive" for e in answered)
+            and any(e["phase"] == "receive" and e["http_status"] == 200 and e["response_bytes"] > 0
+                    and "body_bytes" not in e["request"] for e in query)):
+        report["blocker"] = "The receive trace is missing the Valar query request size"
+        return report
 
     for phase, (tip, phase_log) in phases.items():
         snapshot = native[phase]
-        checks[f"{phase} scanned required tip"] = snapshot.get("scannedHeight", -1) >= tip
+        checks[f"{phase} scanned exactly the advertised tip"] = snapshot.get("scannedHeight") == tip
         checks[f"{phase} found the mined Ironwood output"] = (
             snapshot.get("minedHeight") == MINED and snapshot.get("ironwoodOutputCount") == 1
         )
@@ -337,11 +353,12 @@ def main():
 
                 def isolate_refresh():
                     nonlocal tap
-                    tap.shutdown()
-                    tap.server_close()
-                    tap = None
+                    if tap is not None:
+                        tap.shutdown()
+                        tap.server_close()
+                        tap = None
                     require_refusal(pir_port)
-                    chain.record("control", "direct_pir_refused", {"port": pir_port})
+                    return pir_port
 
                 chain.before_refresh = isolate_refresh
             stage = f"{mode} native Simulator run"
@@ -372,7 +389,9 @@ def main():
         if fleet is not None:
             fleet.close()
         node.shutdown()
+        node.server_close()
         control.shutdown()
+        control.server_close()
         lwd.stop(grace=1).wait()
         statuses = [run.get("status") for run in run_results.values()]
         if "FAIL" in statuses:

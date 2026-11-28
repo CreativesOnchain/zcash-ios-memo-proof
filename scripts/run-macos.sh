@@ -2,6 +2,13 @@
 set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 
+if [[ -e .run || -e artifacts/results.json || -e artifacts/requests.jsonl ]]; then
+  echo "This checkout contains a previous run. Use a fresh checkout to keep its evidence." >&2
+  exit 2
+fi
+mkdir .run
+python3 scripts/results.py init
+
 stage="host and dependency checks"
 record_blocker() {
   local status="$1"
@@ -9,9 +16,11 @@ record_blocker() {
 }
 trap 'record_blocker "$?"' ERR
 
-mkdir -p artifacts
-python3 scripts/results.py init
-[[ "$(uname -s)" == Darwin ]]
+if [[ "$(uname -s)" != Darwin ]]; then
+  python3 scripts/results.py block "The native proof requires macOS with Xcode and an iPhone Simulator"
+  echo "The native proof requires macOS with Xcode and an iPhone Simulator." >&2
+  exit 2
+fi
 for dependency in xcodebuild xcrun xcodegen rustup git openssl protoc; do
   command -v "$dependency"
 done
@@ -24,7 +33,6 @@ xcrun simctl boot "$udid" 2>/dev/null || xcrun simctl list devices booted | grep
 xcrun simctl bootstatus "$udid" -b 2>&1 | tee artifacts/simulator-boot.log
 
 stage="fetch the pinned sources and prepare the fixture"
-mkdir .run
 find_pin() {
   git init -q "$2"
   git -C "$2" -c protocol.version=2 fetch --depth 1 "$1" "$3"

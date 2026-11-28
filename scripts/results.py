@@ -22,16 +22,24 @@ if mode == "init":
         },
     }
     path.parent.mkdir(parents=True, exist_ok=True)
-    (path.parent / "requests.jsonl").touch()
+    if path.exists():
+        sys.exit("A verdict already exists. Use a fresh checkout for another run.")
+    try:
+        (path.parent / "requests.jsonl").touch(exist_ok=False)
+    except FileExistsError:
+        sys.exit("A request log already exists. Use a fresh checkout for another run.")
 elif mode == "block":
     result = json.loads(path.read_text())
-    if result["status"] == "BLOCKED":
-        if result["blocker"] == "No native Simulator run completed":
-            result["blocker"] = sys.argv[2]
-        for run in result["runs"].values():
-            if run["blocker"] == "Not executed":
-                run["blocker"] = result["blocker"]
+    if result["status"] != "BLOCKED":
+        sys.exit(0)
+    if result["blocker"] == "No native Simulator run completed":
+        result["blocker"] = sys.argv[2]
+    for run in result["runs"].values():
+        if run["blocker"] == "Not executed":
+            run["blocker"] = result["blocker"]
 else:
     sys.exit("Expected init or block")
-path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+temporary = path.with_suffix(".tmp")
+temporary.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+temporary.replace(path)
 

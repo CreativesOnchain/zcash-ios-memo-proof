@@ -1,36 +1,55 @@
-# Private Ironwood memo proof for iOS
+# Private Ironwood memo retrieval on iOS
 
-**Native verdict before the first Simulator run: BLOCKED.** This repository compares Zignal's pinned Swift wallet SDK with an opt-in change for reading a confirmed Ironwood memo through Valar private information retrieval (PIR). The test uses one disposable viewing key, one synthetic transaction and loopback services.
-
-## Run from Windows
-
-1. Extract the contents into the root of a GitHub repository you control. Commit and push them to its default branch. Check that GitHub shows `.github/workflows/ios-memo-proof.yml` at that path. GitHub Desktop can commit the extracted directory, including `.github`.
-2. Open **Actions → iOS memo proof → Run workflow**. The workflow builds both SDK versions and the Valar services from pinned source on a hosted Mac. It selects an installed iPhone Simulator. You can start the job from Windows.
-3. Download the **ios-memo-proof** artifact from the completed run. Open **results.json** and **requests.jsonl**. Check the overall status and the three entries under `runs`. A setup failure leaves a BLOCKED verdict with the available Xcode and Simulator diagnostics.
-
-On a Mac, run `bash scripts/run-macos.sh` from a fresh extraction with Xcode, an iPhone Simulator runtime, Rustup, XcodeGen, protoc, OpenSSL 3 and Python 3.11 or 3.12 installed. Setup fetches dependencies. The wallet and test services communicate over loopback.
+This test follows one incoming Zcash payment through the Swift wallet SDK. It records which requests the wallet makes to read a 512-byte Ironwood memo, then refreshes the wallet and checks the memo again. The payment, viewing key and chain are synthetic. The wallet connects to local test services.
 
 ## What the native proof measures
 
-The generator encrypts 512 known bytes into one Ironwood action, updates its commitment and reconstructs the serialized transaction. The synthetic chain serves matching compact blocks, full transaction bytes and tree state. The fixture exercises wallet serialization, scanning and decryption. It does not validate a spend or submit a transaction.
+[Simulator run #5](https://github.com/CreativesOnchain/zcash-ios-memo-proof/actions/runs/45073979280) passed all three cases on November 22, 2026. It used Xcode 16.4 and an iPhone 17 Pro simulator. Each case started with a fresh wallet database.
 
-Each mode imports the disposable viewing key into a fresh database. The app uses its normal Swift synchronizer and reads memos through `SDKSynchronizer.getMemos`. Only the host verifier receives the expected digest. The private modes also insert a separate disposable status-only ID into the wallet queue. This exercises the SDK's ordinary status branch for a transaction of unknown mined height.
+| SDK and service | What the wallet read on receive and refresh | What the servers observed |
+| --- | --- | --- |
+| STOCK | The expected 512-byte memo both times. | One `GetTransaction` naming the payment on receive. No repeat on refresh. |
+| PRIVATE | The same memo both times. | One Valar query on receive, with a 39,028-byte request and a 33,908-byte response. No lightwalletd request named the payment or the separate status probe. |
+| PIR OFFLINE | The confirmed output was visible both times. The memo stayed absent and one enhancement remained queued. | On receive, the recorder returned HTTP 503 after Valar refused the connection. On refresh, the recorder's own port was closed and the SDK logged a failed retry. Neither ID appeared in the lightwalletd requests. |
 
-| Mode | Evidence required for PASS |
-| --- | --- |
-| STOCK | The unmodified Swift SDK detects the confirmed output and returns the expected 512 bytes at receive and refresh. A decoded `GetTransaction` names the fixture transaction during receive. |
-| PRIVATE | The patched Swift SDK returns the same memo both times. During receive, a real encrypted query receives a nonempty Valar response. Neither phase sends the fixture ID or status-probe ID to the gRPC service. |
-| PIR OFFLINE | For receive, the recorder observes the SDK's initialization request, receives a TCP connection refusal from the stopped Valar backend and returns HTTP 503. For refresh, the recorder shuts down too. The harness verifies direct TCP refusal at the app's PIR port and the SDK logs a retry failure. The confirmed output stays visible, its memo stays absent, the enhancement request stays queued and neither ID goes to the gRPC service. |
+The app reads the memo through `SDKSynchronizer.getMemos`. The verifier checks its length and SHA-256 digest against the expected fixture bytes. In the two private cases, a second test ID exercises the SDK path for transactions whose mined height is unknown. A lightwalletd request naming either ID fails either private case, even if the app later exits. Missing app reports or missing block-request traces leave the case blocked. The [verifier](scripts/run_proof.py) checks both scan heights and requires a different wallet database for each mode.
 
-All three modes require recorded compact-block requests during both phases. Both private modes must exercise and defer the ordinary status lookup in each phase. A directly observed disclosure fails the privacy check even if the app crashes. Missing native evidence, a missing trace or a failed build leaves the relevant run BLOCKED. The overall PASS requires three distinct wallet databases and three passing native runs.
+The [verdict](evidence/ios-run-5/results.json), [decoded requests](evidence/ios-run-5/requests.jsonl), and [app reports and console logs](evidence/ios-run-5/) are copies from run #5. The queue counts came from the runner's read-only SQLite queries.
+
+Run #5 recorded scan heights 3,428,144 on receive and 3,428,145 on refresh. Replaying its receive request against the original fixture exposed a server error. The fixture could send the next block early and then end the stream with a gRPC error. The corrected fixture stops at the tip advertised for each phase. A fresh simulator run is needed to verify the app with that correction.
+
+## Scope of the SDK change
+
+This independent test uses the [Swift SDK revision vendored by Zignal](https://github.com/Zkignal/zignal/tree/1341797872c97c21a7d9f83e1936f89d876fbcec/vendor/zcash-swift-wallet-sdk) and [Valar's Enhance service](https://github.com/valargroup/wallet-pir/blob/09bcd8c8b79b14f3dd6599a07fc9ba72017616a3/docs/enhance/integration.md). The [SDK patch](patches/zignal-sdk.diff) retains the compact data needed to authenticate the returned note, checks the publication anchor against the scanned chain, and writes the decrypted memo to the wallet database.
+
+Enabling the patch also defers ordinary status and full-transaction requests, including unrelated ones. Even after PRIVATE recovered the memo, the full-transaction enhancement remained queued. The outage test ended while Valar was offline. Recovery after service returns, app restart, wallet upgrades, Tor routing and physical iPhone behavior are outside this run.
+
+## Run from Windows
+
+In a GitHub repository where you have write access, open **Actions → iOS memo proof → Run workflow**. To use your own account, fork this repository and enable Actions in the fork. The job runs on a hosted Mac. Download the **ios-memo-proof** artifact for the verdict, requests and build logs.
+
+On a Mac, use a fresh clone with Xcode, an iPhone Simulator running iOS 17 or later, Python 3.11 or 3.12, Rustup, XcodeGen, protoc and OpenSSL 3 on your path.
+
+```sh
+bash scripts/run-macos.sh
+```
+
+## Replay the verifier without Xcode
+
+From the repository root, use Python 3.11 or 3.12 on Linux or macOS. These tests replay run #5 and exercise the verifier's failure cases.
+
+```sh
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r scripts/requirements.txt
+mkdir -p .venv/proto
+python -m grpc_tools.protoc -I proto --python_out=.venv/proto proto/compact_formats.proto proto/service.proto
+PYTHONPATH="$PWD/.venv/proto" python -m unittest discover -s scripts -p test_verdict.py -v
+```
 
 ## What has already run on Linux
 
-`evidence/linux-wallet-core.json` contains the result from separate builds of the pinned original Rust wallet library and the patched library. `evidence/linux-requests.jsonl` contains the corresponding decoded HTTP and gRPC traffic. The host driver called the C entry points for scanning, ordinary decryption and private recovery. It read `v_tx_outputs` and `v_transactions` in each resulting wallet database after both phases. The driver chose the requests in this comparison. Only the Simulator run can establish which requests the Swift app selects.
-
-The ordinary path retrieved the full serialized transaction. The private path made a successful encrypted query. Both stored the same 512-byte memo. The stopped backend and then the closed wallet-facing port left one confirmed Ironwood output, a NULL memo and one pending enhancement. After *successful* private recovery, the general full-transaction enhancement also remained queued. A memo can be available before the wallet has the rest of the transaction.
-
-To repeat the optional host comparison, build separate Linux shared libraries from the original and patched SDK crates with `cargo +1.97.1 rustc --lib --locked --crate-type cdylib`. Generate the protocol modules and fixture with the commands in `scripts/run-macos.sh`. Build Valar's `pir-publisher` and `pir-query-server` at the pin and with the features in `scripts/run_proof.py`. With the generated modules and Valar's `tools/enhance/scripts` on `PYTHONPATH`, run the following command. Use a new directory for the output.
+The earlier [Rust wallet result](evidence/linux-wallet-core.json) and [request log](evidence/linux-requests.jsonl) came from a host driver that chose the requests itself. Its native-iOS status records the state before the first simulator run. To repeat that comparison, build separate stock and patched SDK libraries with `cargo +1.97.1 rustc --lib --locked --crate-type cdylib` in each SDK crate. Generate the fixture and protocol modules using [run-macos.sh](scripts/run-macos.sh). Build Valar's publisher and query server with the features in [run_proof.py](scripts/run_proof.py). Add the generated modules and Valar's `tools/enhance/scripts` directory to `PYTHONPATH`, then run the host driver with paths to those builds and a new output directory.
 
 ```sh
 python scripts/check-rust-wallet.py \
@@ -41,14 +60,4 @@ python scripts/check-rust-wallet.py \
   --artifacts ./host-comparison
 ```
 
-## Scope of the SDK change
-
-`patches/zignal-sdk.diff` includes the exact SDK change and Rust lockfile. The app can vendor it directly. The patch retains compact context from newly scanned notes, compares the Valar manifest anchor against the scanned chain, authenticates and decrypts the note locally, and rechecks the note and anchor before writing the memo. The proof covers receiving one confirmed note. The opt-in mode also defers ordinary status and full-transaction requests, including unrelated ones. Existing-wallet recovery, a complete policy for those deferred requests, reorg handling and physical-device measurements remain release work.
-
-- [Zignal developer's question about Swift and iOS](https://forum.zcashcommunity.com/t/announcing-fastz-cash-rpc-by-zcash-labs/59478/3)
-- [Pinned Zignal SDK source](https://github.com/Zkignal/zignal/tree/1341797872c97c21a7d9f83e1936f89d876fbcec)
-- [Pinned Valar service and integration contract](https://github.com/valargroup/wallet-pir/blob/09bcd8c8b79b14f3dd6599a07fc9ba72017616a3/docs/enhance/integration.md)
-- [Pinned wallet protocol schemas](https://github.com/zakura-core/wallet-libraries/tree/248fb191a91d1260e50f95b3a14a12f67085829c/librustzcash/zcash_client_backend/lightwallet-protocol/walletrpc)
-- [GitHub manual workflow instructions](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow)
-
-The proof harness uses the MIT license. The bundled protocol schemas and SDK patch carry their upstream notices in `proto/LICENSE` and `patches/SDK-LICENSE`.
+The harness uses the [MIT license](LICENSE). The [SDK notice](patches/SDK-LICENSE) and [protocol license](proto/LICENSE) accompany the vendored files. The [wallet protocol schemas](https://github.com/zakura-core/wallet-libraries/tree/248fb191a91d1260e50f95b3a14a12f67085829c/librustzcash/zcash_client_backend/lightwallet-protocol/walletrpc) are pinned to the revision used by this fixture.

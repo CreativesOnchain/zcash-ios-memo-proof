@@ -122,6 +122,23 @@ class Chain:
             ironwoodTree=self.fixture["ironwood_tree"] if height >= MINED else "000000",
         )
 
+    def block_range(self, request, context):
+        if request.start.hash or request.end.hash:
+            context.abort(grpc.StatusCode.INVALID_ARGUMENT, "Block ranges require heights")
+        if request.poolTypes and set(request.poolTypes) != {rpc.SAPLING, rpc.ORCHARD, rpc.IRONWOOD}:
+            context.abort(grpc.StatusCode.UNIMPLEMENTED, "This fixture serves the default shielded pool range")
+        start, end = request.start.height, request.end.height
+        low, high = sorted((start, end))
+        tip = self.tip
+        if low < START - 1 or low > tip:
+            context.abort(grpc.StatusCode.OUT_OF_RANGE, "Block range is outside the current fixture chain")
+        high = min(high, tip)
+        heights = range(low, high + 1) if start <= end else range(high, low - 1, -1)
+        self.record("fixture", "selected_block_range", {
+            "first_height": heights[0], "last_height": heights[-1], "advertised_tip": tip,
+        })
+        return (self.blocks[height] for height in heights)
+
     def answer(self, method, request, context):
         if method == "GetLightdInfo":
             return rpc.LightdInfo(version="fixture", vendor="memo-proof", chainName="main",
@@ -131,12 +148,14 @@ class Chain:
             return rpc.BlockID(height=self.tip, hash=self.blocks[self.tip].hash)
         if method == "GetLatestTreeState":
             return self.state(self.tip)
+        if method in ("GetTreeState", "GetBlock") and request.height > self.tip:
+            context.abort(grpc.StatusCode.OUT_OF_RANGE, "Height is above the current fixture tip")
         if method == "GetTreeState":
             return self.state(request.height)
         if method == "GetBlock":
             return self.blocks[request.height]
         if method == "GetBlockRange":
-            return iter(self.blocks[h] for h in range(request.start.height, request.end.height + 1))
+            return self.block_range(request, context)
         if method == "GetTransaction":
             if request.hash in (self.txid, self.txid[::-1]):
                 return rpc.RawTransaction(data=self.raw, height=MINED)
@@ -188,20 +207,25 @@ class Chain:
 
     def serve_control(self):
         chain = self
+        refresh_lock = threading.Lock()
 
         class Control(QuietHandler):
             def do_POST(self):
-                with chain.lock:
+                with refresh_lock:
                     if self.path != "/refresh" or chain.phase != "receive":
                         return self.reply(status=409)
-                    chain.phase, chain.tip = "refresh", REFRESH_TIP
+                    refused_port = None
                     if chain.before_refresh is not None:
                         try:
-                            chain.before_refresh()
+                            refused_port = chain.before_refresh()
                         except (OSError, RuntimeError) as error:
                             chain.record("control", "outage_setup_error", {"error": str(error)})
                             return self.reply(status=503)
-                    chain.record("control", "refresh", {})
+                    with chain.lock:
+                        chain.phase, chain.tip = "refresh", REFRESH_TIP
+                        if refused_port is not None:
+                            chain.record("control", "direct_pir_refused", {"port": refused_port})
+                        chain.record("control", "refresh", {})
                 self.reply()
 
         return http_server(Control)

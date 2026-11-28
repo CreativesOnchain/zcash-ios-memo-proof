@@ -1,0 +1,27 @@
+{
+  "mode": "STOCK",
+  "simulator": true,
+  "refresh": {
+    "ironwoodOutputCount": 1,
+    "minedHeight": 3428143,
+    "scannedHeight": 3428145,
+    "memoLengths": [
+      512
+    ],
+    "memoHashes": [
+      "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4"
+    ]
+  },
+  "receive": {
+    "ironwoodOutputCount": 1,
+    "minedHeight": 3428143,
+    "scannedHeight": 3428144,
+    "memoLengths": [
+      512
+    ],
+    "memoHashes": [
+      "b7f296550d5a0399d40d930da429d1174e9d60ca8389eaf9bf4506472a2398d4"
+    ]
+  },
+  "database": "/Users/runner/Library/Developer/CoreSimulator/Devices/B290E327-433A-4878-BC55-828A994DCA6C/data/Containers/Data/Application/9D1890EE-5254-47FC-915F-62AA91B9454F/Documents/4AD0F93C-A5CB-406B-B447-0E70565FCCA4/wallet.db"
+}

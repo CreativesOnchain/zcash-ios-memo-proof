@@ -14,7 +14,7 @@ import compact_formats_pb2 as compact
 import service_pb2 as rpc
 from fixture_node import confirmation_transaction
 from fixture_services import Chain, START, MINED, RECEIVE_TIP, REFRESH_TIP
-from run_proof import require_refusal, start_valar, write_json
+from run_proof import answered_valar_query, require_refusal, start_valar, write_json
 
 
 def require(condition, detail):
@@ -98,7 +98,7 @@ def main():
               "zignal_source": "1341797872c97c21a7d9f83e1936f89d876fbcec",
               "valar_source": "09bcd8c8b79b14f3dd6599a07fc9ba72017616a3",
               "candidate_patch_sha256": hashlib.sha256(patch.read_bytes()).hexdigest(),
-              "native_ios_status": "BLOCKED", "txid_wire_order": fixture["txid"],
+              "native_ios_status": "NOT_RUN", "txid_wire_order": fixture["txid"],
               "expected_memo_sha256": hashlib.sha256(expected).hexdigest(), "runs": {}}
     try:
         for mode in ("ORDINARY", "PRIVATE", "PIR OFFLINE"):
@@ -188,8 +188,7 @@ def main():
             ordinary = [e for e in trace if e["service"] == "lightwalletd" and e["method"] == "GetTransaction"]
             require(len(ordinary) == (1 if mode == "ORDINARY" else 0), "Host driver issued an unexpected lookup")
             pir = [e for e in trace if e["service"] == "pir"]
-            answered = sum(e["method"] == "POST" and urlsplit(e["request"]["path"]).path == "/enhance/v1/query"
-                           and e["http_status"] == 200 and e["response_bytes"] > 0 for e in pir)
+            answered = sum(answered_valar_query(e) for e in pir)
             refused = sum(e.get("backend_connection_refused", False) for e in pir)
             require((answered > 0) == (mode == "PRIVATE"), "Unexpected encrypted query evidence")
             require((refused > 0) == (mode == "PIR OFFLINE"), "Unexpected witness evidence")

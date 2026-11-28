@@ -1,0 +1,19 @@
+{
+  "simulator": true,
+  "refresh": {
+    "scannedHeight": 3428145,
+    "memoHashes": [],
+    "memoLengths": [],
+    "ironwoodOutputCount": 1,
+    "minedHeight": 3428143
+  },
+  "mode": "PIR OFFLINE",
+  "database": "/Users/runner/Library/Developer/CoreSimulator/Devices/B290E327-433A-4878-BC55-828A994DCA6C/data/Containers/Data/Application/3B3300CD-C461-446C-A763-70EB971516C3/Documents/4F5C6680-0E82-4B30-8B95-AA5545954041/wallet.db",
+  "receive": {
+    "scannedHeight": 3428144,
+    "memoHashes": [],
+    "memoLengths": [],
+    "ironwoodOutputCount": 1,
+    "minedHeight": 3428143
+  }
+}
